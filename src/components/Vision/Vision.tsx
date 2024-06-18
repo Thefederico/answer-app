@@ -43,8 +43,8 @@ export default function Vision() {
     loading: false,
   });
 
-  const tooggleLoading = () => {
-    setState((prev) => ({ ...prev, loading: !prev.loading }));
+  const tooggleLoading = (loading: boolean) => {
+    setState((prev) => ({ ...prev, loading }));
   };
 
   const downloadExampleImage = () => {
@@ -77,25 +77,21 @@ export default function Vision() {
       return;
     }
 
+    tooggleLoading(true);
     try {
-      tooggleLoading();
-
       const formData = new FormData();
       formData.append("file", state.image.file);
       formData.append("prompt", state.prompt);
-
       const response = fetch("/api/vision", {
         method: "POST",
         body: formData,
       });
-
       const data = await response.then((res) => res.json());
-
       setState((prev) => ({ ...prev, message: data["content"] }));
-
-      tooggleLoading();
+      tooggleLoading(false);
     } catch (error) {
-      console.error(error);
+      toast("Hubo un error al procesar la imagen");
+      tooggleLoading(false);
     }
   };
 
@@ -183,10 +179,10 @@ export default function Vision() {
           </div>
         </CardContent>
         <CardFooter>
-          {state.message && <p>{state.message}</p>}
           {state.loading && (
-            <Skeleton className="bg-slate-400 rounded-full w-full h-[20px]" />
+            <Skeleton className="bg-slate-500 rounded-full w-[220px] h-[20px]" />
           )}
+          {state.message && <p>{state.message}</p>}
         </CardFooter>
       </Card>
     </div>
