@@ -23,29 +23,34 @@ export async function POST(req: Request) {
     return new Response("File is required", { status: 400 });
   }
 
-  const buffer = await file.arrayBuffer();
-  const base64Image = await bufferToBase64(Buffer.from(buffer));
+  try {
+    const buffer = await file.arrayBuffer();
+    const base64Image = await bufferToBase64(Buffer.from(buffer));
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          {
-            type: "image_url",
-            image_url: {
-              url: `data:image/jpeg;base64,${base64Image}`,
-              detail: "low",
+    const response = await client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+                detail: "low",
+              },
             },
-          },
-        ],
-      },
-    ],
-  });
+          ],
+        },
+      ],
+    });
 
-  return new Response(JSON.stringify(response.choices[0].message), {
-    status: 200,
-  });
+    return new Response(JSON.stringify(response.choices[0].message), {
+      status: 200,
+    });
+  } catch (error) {
+    console.log(error);
+    return new Response("Error converting file to base64", { status: 500 });
+  }
 }

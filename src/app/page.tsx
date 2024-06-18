@@ -50,7 +50,7 @@ export default function Home() {
             variant="outline"
             className="mx-auto w-1/3 text-slate-950 transition-all translate-x-0 hover:-translate-y-1 active:-translate-y-1"
           >
-            <Link href="/eva">Demo</Link>
+            <Link className="w-full" href="/eva">Demo</Link>
           </Button>
         </div>
       </section>
